@@ -95,7 +95,7 @@ related to the input URL).  The first non-nil result is used."
   :group 'org-inline-image)
 
 (defcustom org-inline-image-regexp-resolver-alist
-  '(("deviantart\\.com" . org-inline-image--resolve-deviantart))
+  '(("deviantart\\.com/art/" . org-inline-image--resolve-deviantart-image))
   "Alist maping a regular expressions to a resolver.
 
 Resolver should be a function mapping the input URL to an URL
@@ -131,8 +131,8 @@ to convert INPUTs to outputs."
     (when resolvers
       (funcall (cdar resolvers) input))))
 
-(defun org-inline-image--resolve-deviantart (input)
-  "Resolve deviantart.com URL."
+(defun org-inline-image--resolve-deviantart-image (input)
+  "Resolve deviantart.com/art/ URL."
   (let ((hexified (url-hexify-string input)))
     (save-match-data
       (with-current-buffer
