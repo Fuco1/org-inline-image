@@ -1,3 +1,77 @@
+;;; org-inline-image.el --- Inline images into org-mode buffers
+
+;; Copyright (C) 2014 Matus Goljer <matus.goljer@gmail.com>
+
+;; Author: Matus Goljer <matus.goljer@gmail.com>
+;; Maintainer: Matus Goljer <matus.goljer@gmail.com>
+;; Version: 0.0.1
+;; Created: 26 April 2014
+;; Keywords: outlines, hypermedia, calendar, wp
+;; URL: https://github.com/Fuco1/org-inline-image
+
+;; This file is not part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License
+;; as published by the Free Software Foundation; either version 3
+;; of the License, or (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; This package adds functionality to inline images into an `org-mode'
+;; buffer.  The images can be present locally on the filesystem (not
+;; implemented yet) or downloaded from the internet automatically.
+
+;; In addition to a simple direct-to-image links, this package
+;; supports a resolving mechanism to inline images from popular
+;; websites such as imgur, deviantart, tumblr and others.  There is
+;; also planned support for galleries.
+
+;; An example use-case is a bookmarks file, where the user can easily
+;; display the images/galleries in emacs without switching to the
+;; browser, which is often not necessary.
+
+;; Use
+;; ---
+
+;; Call `org-inline-image' when the point is on the link to inline it
+;; there.  The link text will be overlayed with the image.  To hide
+;; the image, hit `h' (or call `org-inline-image-hide') while the
+;; point is on the image.  Gif images are animated automatically when
+;; inlined.  To animate it again, hit `a' (or call
+;; `org-inline-image-animate').
+
+;; Supported websites
+;; ------------------
+
+;; See the file `examples.org' for all supported links.  If you want
+;; your preferred site to be supported, please write a resolver and
+;; submit a patch, or at least start an issue where details could be
+;; discussed.
+
+;; The built in `org-inline-image--regexp-resolver' uses an alist
+;; `org-inline-image-regexp-resolver-alist' to feed the URL to a
+;; function which will return the URL of the image by matching the
+;; supplied URL to a regexp.  For a more sophisticated resolver, you
+;; can write a custom function and add it to
+;; `org-inline-image-resolvers'.  See the documentation of the
+;; mentioned functions for more informations.
+
+;;; Code:
+
+(defgroup org-inline-image ()
+  "Inline images into org-mode buffers."
+  :group 'org
+  :prefix "org-inline-image-")
+
 (defcustom org-inline-image-root "/tmp/org-inline-image/"
   "Root directory where temp files are stored."
   :type 'directory
@@ -83,14 +157,9 @@ to convert INPUTs to outputs."
   "Return the value of property PROP for image under point."
   (overlay-get (org-inline-image--get-current-image) prop))
 
-(defun org-inline-image-animate ()
-  "Animate the image if it's possible."
-  (interactive)
-  (let ((image-props (org-inline-image--get 'display)))
-    (when (image-animated-p image-props)
-      (image-animate image-props))))
-
 ;; TODO: cache downloaded images?
+;; TODO: add support for local images
+;;;###autoload
 (defun org-inline-image ()
   "Inline an image."
   (interactive)
@@ -112,6 +181,7 @@ to convert INPUTs to outputs."
             (image-animate image-props))
           (goto-char (plist-get link-data :beg)))))))
 
+
 ;; TODO: make removing optional?
 (defun org-inline-image-hide ()
   "Hide the inlined image at point.
@@ -123,6 +193,13 @@ will re-download the file."
         (original-file (org-inline-image--get 'original-file)))
     (delete-overlay ov)
     (delete-file original-file)))
+
+(defun org-inline-image-animate ()
+  "Animate the image if it's possible."
+  (interactive)
+  (let ((image-props (org-inline-image--get 'display)))
+    (when (image-animated-p image-props)
+      (image-animate image-props))))
 
 (defun org-inline-image--on-link ()
   "Return non-nil if point is inside a link."
@@ -148,3 +225,6 @@ will re-download the file."
       (setq end (match-end 0))
       (setq link (match-string 0))))
     (list :beg beg :end end :link (plist-get (get-text-property 1 'htmlize-link link) :uri))))
+
+(provide 'org-inline-image)
+;;; org-inline-image.el ends here

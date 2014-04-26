@@ -1,0 +1,8 @@
+Here's a list of supported link formats.  If you want some more, feel free to write the resolvers and submit a patch.
+
+- direct link to images
+  - (static) http://upload.wikimedia.org/wikipedia/commons/5/58/Sunset_2007-1.jpg
+  - (animated) http://i.imgur.com/qvM6Xho.gif
+- links to deviantart picture page
+  - (picture page with discussion etc.) http://www.deviantart.com/art/Transylvanian-Castle-450064327
+  - (direct link) http://th03.deviantart.net/fs71/PRE/i/2014/115/c/9/transylvanian_castle_by_daroz-d7fyfuv.jpg
