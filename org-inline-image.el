@@ -77,7 +77,7 @@
   :type 'directory
   :group 'org-inline-image)
 
-(defcustom org-inline-image-resolve-url '(identity)
+(defcustom org-inline-image-resolvers '(org-inline-image--regexp-resolver identity)
   "List of functions which resolve URLs.
 
 Each function should take one input argument.
@@ -166,7 +166,7 @@ to convert INPUTs to outputs."
   (org-inline-image--create-root-maybe)
   (-when-let (link-data (org-inline-image--get-link))
     (let* ((resolved-link (run-hook-with-args-until-success
-                           'org-inline-image-resolve-url
+                           'org-inline-image-resolvers
                            (plist-get link-data :link)))
            (name (concat org-inline-image-root (f-filename resolved-link))))
       (when (url-copy-file resolved-link name)
