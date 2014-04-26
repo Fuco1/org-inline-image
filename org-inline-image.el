@@ -95,7 +95,8 @@ related to the input URL).  The first non-nil result is used."
   :group 'org-inline-image)
 
 (defcustom org-inline-image-regexp-resolver-alist
-  '(("deviantart\\.com/art/" . org-inline-image--resolve-deviantart-image))
+  '(("deviantart\\.com/art/" . org-inline-image--resolve-deviantart-image)
+    ("//\\(www\\.\\)?imgur\\.com" . org-inline-image--resolve-imgur-image))
   "Alist maping a regular expressions to a resolver.
 
 Resolver should be a function mapping the input URL to an URL
@@ -140,6 +141,14 @@ to convert INPUTs to outputs."
         (goto-char (point-min))
         (when (re-search-forward "\"url\":\"\\(.*?\\)\"")
           (match-string 1))))))
+
+(defun org-inline-image--resolve-imgur-image (input)
+  "Resolve imgur.com URL."
+  (unless (string-match-p "gallery" input)
+    (with-current-buffer (url-retrieve-synchronously input)
+      (goto-char (point-min))
+      (when (re-search-forward "<link rel=\"image_src\" href=\"\\(.*?\\)\"/>")
+        (match-string 1)))))
 
 (defun org-inline-image--create-root-maybe ()
   "Create root directory if it doesn't exist yet."
