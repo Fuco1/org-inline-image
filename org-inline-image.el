@@ -6,6 +6,7 @@
 ;; Maintainer: Matus Goljer <matus.goljer@gmail.com>
 ;; Version: 0.0.1
 ;; Created: 26 April 2014
+;; Package-requires: ((dash "2.5.0"))
 ;; Keywords: outlines, hypermedia, calendar, wp
 ;; URL: https://github.com/Fuco1/org-inline-image
 
@@ -66,6 +67,9 @@
 ;; mentioned functions for more informations.
 
 ;;; Code:
+
+(require 'org)
+(require 'dash)
 
 (defgroup org-inline-image ()
   "Inline images into org-mode buffers."
