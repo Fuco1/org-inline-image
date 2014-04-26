@@ -214,13 +214,6 @@ will re-download the file."
     (when (image-animated-p image-props)
       (image-animate image-props))))
 
-(defun org-inline-image--on-link ()
-  "Return non-nil if point is inside a link."
-  (org-in-regexp
-   (concat org-plain-link-re "\\|"
-           org-bracket-link-regexp "\\|"
-           org-angle-link-re "\\|")))
-
 (defun org-inline-image--get-link ()
   "Get link at point."
   (let (beg end link)
