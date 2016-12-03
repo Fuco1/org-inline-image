@@ -109,6 +109,7 @@ This is used in `org-inline-image-regexp-resolver'."
           :value-type function)
   :group 'org-inline-image)
 
+;; TODO: add key to resize/fill/refresh
 (defvar org-inline-image-keymap
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "a") 'org-inline-image-animate)
@@ -172,6 +173,7 @@ to convert INPUTs to outputs."
 
 ;; TODO: cache downloaded images?
 ;; TODO: add support for local images
+;; TODO: add support to "pop image to separate buffer/window"
 ;;;###autoload
 (defun org-inline-image ()
   "Inline an image."
@@ -184,6 +186,8 @@ to convert INPUTs to outputs."
            (name (concat org-inline-image-root (f-filename resolved-link))))
       (when (url-copy-file resolved-link name)
         (let ((ov (make-overlay (plist-get link-data :beg) (plist-get link-data :end)))
+              ;; TODO: replace with `create-image'?
+              ;; this can also support automatic resizing
               (image-props (org-inline-image--get-image-props name)))
           (overlay-put ov 'type 'oii)
           (overlay-put ov 'display image-props)
